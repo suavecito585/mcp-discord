@@ -36,6 +36,7 @@ import {
   addReactionHandler,
   addMultipleReactionsHandler,
   removeReactionHandler,
+  getReactionUsersHandler,
   deleteMessageHandler
 } from './reactions.js';
 import {
@@ -78,6 +79,7 @@ export {
   addReactionHandler,
   addMultipleReactionsHandler,
   removeReactionHandler,
+  getReactionUsersHandler,
   deleteMessageHandler,
   createWebhookHandler,
   sendWebhookMessageHandler,

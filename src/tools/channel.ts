@@ -333,7 +333,7 @@ export async function readMessagesHandler(
       };
     }
 
-    // Format messages 
+    // Format messages
     const formattedMessages = messages.map(msg => ({
       id: msg.id,
       content: msg.content,
@@ -345,7 +345,16 @@ export async function readMessagesHandler(
       timestamp: msg.createdAt,
       attachments: msg.attachments.size,
       embeds: msg.embeds.length,
-      replyTo: msg.reference ? msg.reference.messageId : null
+      replyTo: msg.reference ? msg.reference.messageId : null,
+      // Expose reactions populated by REST fetch (no Gateway intent required).
+      // Each entry includes the unicode/custom emoji name+id, total count, and
+      // whether the bot itself reacted. User IDs are not listed here to keep the
+      // payload small; use discord_get_reaction_users for that.
+      reactions: msg.reactions.cache.map(r => ({
+        emoji: { name: r.emoji.name, id: r.emoji.id },
+        count: r.count,
+        me: r.me
+      }))
     })).sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
 
     return {
