@@ -152,6 +152,15 @@ export const RemoveReactionSchema = z.object({
     description: "Remove a reaction from a specific message in a channel."
 });
 
+export const GetReactionUsersSchema = z.object({
+    channelId: z.string({ description: "The ID of the channel containing the message." }),
+    messageId: z.string({ description: "The ID of the message to inspect reactions on." }),
+    emoji: z.string({ description: "The emoji whose reactors should be listed (unicode name or custom emoji name)." }),
+    limit: z.number({ description: "Maximum number of users to fetch per reaction (1-100, default 100)." }).int().min(1).max(100).default(100).optional()
+}, {
+    description: "List the users who reacted with a specific emoji to a message. Uses REST fetch and does not require Gateway intents."
+});
+
 export const DeleteForumPostSchema = z.object({
     threadId: z.string({ description: "The ID of the forum thread to delete." }),
     reason: z.string({ description: "Optional reason for audit logs when deleting the forum post." }).optional()

@@ -29,6 +29,7 @@ import {
   addReactionHandler,
   addMultipleReactionsHandler,
   removeReactionHandler,
+  getReactionUsersHandler,
   deleteMessageHandler,
   createWebhookHandler,
   sendWebhookMessageHandler,
@@ -206,6 +207,11 @@ export class DiscordMCPServer {
           case "discord_remove_reaction":
             this.logClientState("before discord_remove_reaction handler");
             toolResponse = await removeReactionHandler(args, this.toolContext);
+            return toolResponse;
+
+          case "discord_get_reaction_users":
+            this.logClientState("before discord_get_reaction_users handler");
+            toolResponse = await getReactionUsersHandler(args, this.toolContext);
             return toolResponse;
 
           case "discord_delete_message":

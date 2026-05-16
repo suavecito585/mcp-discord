@@ -258,6 +258,25 @@ export const toolList = [
     }
   },
   {
+    name: "discord_get_reaction_users",
+    description: "Lists the users who reacted with a specific emoji to a Discord message. Uses REST fetch and does not require Gateway intents. Returns up to 100 users per call.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        channelId: { type: "string" },
+        messageId: { type: "string" },
+        emoji: { type: "string", description: "Unicode emoji name (e.g. '🟢') or custom emoji name." },
+        limit: {
+          type: "number",
+          minimum: 1,
+          maximum: 100,
+          default: 100
+        }
+      },
+      required: ["channelId", "messageId", "emoji"]
+    }
+  },
+  {
     name: "discord_delete_forum_post",
     description: "Deletes a forum post or thread with an optional reason",
     inputSchema: {

@@ -53,6 +53,7 @@ function createMcpServer(client: Client) {
         { name: 'discord_add_reaction', schema: schemas.AddReactionSchema, handler: handlers.addReactionHandler },
         { name: 'discord_add_multiple_reactions', schema: schemas.AddMultipleReactionsSchema, handler: handlers.addMultipleReactionsHandler },
         { name: 'discord_remove_reaction', schema: schemas.RemoveReactionSchema, handler: handlers.removeReactionHandler },
+        { name: 'discord_get_reaction_users', schema: schemas.GetReactionUsersSchema, handler: handlers.getReactionUsersHandler },
         { name: 'discord_delete_message', schema: schemas.DeleteMessageSchema, handler: handlers.deleteMessageHandler },
         { name: 'discord_create_webhook', schema: schemas.CreateWebhookSchema, handler: handlers.createWebhookHandler },
         { name: 'discord_send_webhook_message', schema: schemas.SendWebhookMessageSchema, handler: handlers.sendWebhookMessageHandler },

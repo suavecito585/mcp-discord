@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { ToolContext, ToolResponse } from "./types.js";
-import { 
-  AddReactionSchema, 
-  AddMultipleReactionsSchema, 
+import {
+  AddReactionSchema,
+  AddMultipleReactionsSchema,
   RemoveReactionSchema,
-  DeleteMessageSchema
+  DeleteMessageSchema,
+  GetReactionUsersSchema
 } from "../schemas.js";
 import { handleDiscordError } from "../errorHandler.js";
 
@@ -162,6 +163,81 @@ export async function removeReactionHandler(
         }]
       };
     }
+  } catch (error) {
+    return handleDiscordError(error);
+  }
+}
+
+// Get reaction users handler
+export async function getReactionUsersHandler(
+  args: unknown,
+  context: ToolContext
+): Promise<ToolResponse> {
+  const { channelId, messageId, emoji, limit } = GetReactionUsersSchema.parse(args);
+  try {
+    if (!context.client.isReady()) {
+      return {
+        content: [{ type: "text", text: "Discord client not logged in." }],
+        isError: true
+      };
+    }
+
+    const channel = await context.client.channels.fetch(channelId);
+    if (!channel || !channel.isTextBased() || !('messages' in channel)) {
+      return {
+        content: [{ type: "text", text: `Cannot find text channel with ID: ${channelId}` }],
+        isError: true
+      };
+    }
+
+    const message = await channel.messages.fetch(messageId);
+    if (!message) {
+      return {
+        content: [{ type: "text", text: `Cannot find message with ID: ${messageId}` }],
+        isError: true
+      };
+    }
+
+    const reaction = message.reactions.cache.find(
+      r => r.emoji.toString() === emoji || r.emoji.name === emoji
+    );
+
+    if (!reaction) {
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify({
+            channelId,
+            messageId,
+            emoji,
+            count: 0,
+            users: []
+          }, null, 2)
+        }]
+      };
+    }
+
+    // REST-based user list fetch; no Gateway intent required.
+    const users = await reaction.users.fetch({ limit: limit ?? 100 });
+    const formattedUsers = users.map(u => ({
+      id: u.id,
+      username: u.username,
+      bot: u.bot
+    }));
+
+    return {
+      content: [{
+        type: "text",
+        text: JSON.stringify({
+          channelId,
+          messageId,
+          emoji: { name: reaction.emoji.name, id: reaction.emoji.id },
+          count: reaction.count,
+          me: reaction.me,
+          users: formattedUsers
+        }, null, 2)
+      }]
+    };
   } catch (error) {
     return handleDiscordError(error);
   }
